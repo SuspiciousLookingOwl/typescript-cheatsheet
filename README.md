@@ -10,7 +10,7 @@ If you spot a mistake or want to add more cheatsheet, feel free to [open an issu
     - [Common Types](#common-types)
   - [Union](#union)
   - [Array](#array)
-  - [Interface and Object](#interface-and-object)
+  - [Interface, Utility, and Object](#interface-utility-and-object)
     - [Simple Interface](#simple-interface)
     - [Partial](#partial)
   - [Type guard](#type-guard)
@@ -19,10 +19,12 @@ If you spot a mistake or want to add more cheatsheet, feel free to [open an issu
     - [Optional Parameter](#optional-parameter)
     - [Overloading (with conditional return type)](#overloading-with-conditional-return-type)
   - [Class](#class)
+  - [Enums](#enums)
   - [Generic Type](#generic-type)
     - [Basic](#basic)
     - [Conditional Return Type](#conditional-return-type)
     - [Conditional EventEmitter Callback Type](#conditional-eventemitter-callback-type)
+    - [Object value as Union Type](#object-value-as-union-type)
 
 ## Basic Type
 
@@ -74,7 +76,8 @@ strOrNum = 1; // can be assigned  as number
 ```
 
 ```ts
-let num: 1 | 2 | 3 = 1;
+// Type also can be literal
+let num: 1 | 2 | 3 = 1; // num can only be 1, 2, or 3
 num = 2;
 num = 4; // Error: Type '4' is not assignable to type '1 | 2 | 3'
 ```
@@ -94,7 +97,7 @@ const x: (string | number)[] = ["Foo", "Bar", 1, 2, 3];
 x.push(true); // Error: Argument of type 'boolean' is not assignable to parameter of type 'string | number'
 ```
 
-## Interface and Object
+## Interface, Utility, and Object
 
 ### Simple Interface
 
@@ -106,14 +109,16 @@ Read more:
 interface Foo {
   x: number;
   y: string;
+  readonly z?: boolean;
   opt?: string; // optional key
 }
 
-const foo: Foo = {
+let foo: Foo = {
   x: 1,
   y: "string",
   z: false, // Error: Type '{ x: number; y: string; z: boolean; }' is not assignable to type 'Foo'
 };
+foo.z = true; // Error: Cannot assign to 'z' because it is a read-only property.
 
 // Error: Property 'y' is missing in type '{ x: number; }' but required in type 'Foo'
 const foo2: Foo = {
@@ -256,6 +261,26 @@ foo.exampleGetter; // "privateVar is : foo"
 foo.exampleMethod(5, 10); // 15
 ```
 
+## Enums
+
+Read more:
+
+- https://www.typescriptlang.org/docs/handbook/enums.html
+
+```ts
+enum Options {
+  A, // not assigned, therefore it's 0
+  B, // not assigned, therefore it's 1
+  C = "C",
+  D = "D",
+}
+
+const opt: Options = Options.A; // 0
+Options.B; // 1
+Options.C; // "C"
+Options.D; // "D"
+```
+
 ## Generic Type
 
 Read more:
@@ -352,4 +377,19 @@ foo.on("ready", (status) => {
 foo.on("data", (data) => {
   data; // is string
 });
+```
+
+### Object value as Union Type
+
+```ts
+type ValueOf<T> = T[keyof T];
+
+const value = {
+  a: 1,
+  b: 2,
+  c: 3,
+} as const;
+
+let x: ValueOf<typeof value> = 1; // x can only be 1, 2, or 3
+x = 4; // Error: Type '4' is not assignable to type 'ValueOf<{ readonly a: 1; readonly b: 2; readonly c: 3; }>'
 ```
