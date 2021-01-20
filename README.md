@@ -116,7 +116,7 @@ interface Foo {
 let foo: Foo = {
   x: 1,
   y: "string",
-  z: false, // Error: Type '{ x: number; y: string; z: boolean; }' is not assignable to type 'Foo'
+  z: false,
 };
 foo.z = true; // Error: Cannot assign to 'z' because it is a read-only property.
 
