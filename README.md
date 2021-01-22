@@ -323,7 +323,6 @@ foo(1); // is number
 
 ```ts
 // Also can do the same with object parameter
-
 type FooReturnType<T> = T extends { type: "string" } ? string : number;
 
 interface Options {
@@ -332,11 +331,11 @@ interface Options {
 }
 
 function foo<T extends Options>(x: T): FooReturnType<T>;
-function foo(x: string | number) {
-  if (typeof x === "string") {
+function foo(x: Options) {
+  if (x.type === "string") {
     return "It's a string!";
   } else {
-    return x + 5;
+    return 5;
   }
 }
 
